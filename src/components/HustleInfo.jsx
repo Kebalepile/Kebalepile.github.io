@@ -1,7 +1,7 @@
 export default function HustleInfo() {
   return (
-    <>
-      <h1>hustle info</h1>
-    </>
+    <div className="card">
+       <h1>hustle info</h1>
+    </div>
   );
 }

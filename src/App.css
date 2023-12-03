@@ -18,18 +18,20 @@
   --C4: rgba(7, 92, 204, 0.979);
   --C5: #33373a;
   --C6: #242424;
-  
+  --C7: #ffffffde;
+
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color: var(--C7);
+  background-color: var(--C6);
 }
-/* #root {
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+#root{
+  /* width:100dvw; */
+  /* height:100dvh; */
+  /* display: flex;
+  flex-direction: column; */
 
 
-} */
+}
 
 @keyframes logo-spin {
   from {

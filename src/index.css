@@ -14,29 +14,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
+/* a {
   font-weight: 500;
   color: #646cff;
   text-decoration: inherit;
 }
 a:hover {
   color: #535bf2;
-}
+} */
 
-body {
+/* body {
   margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
+} */
 
-h1 {
+/* h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
+} */
 
-button {
+/* button {
   border-radius: 8px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
@@ -45,9 +45,9 @@ button {
   font-family: inherit;
   background-color: #1a1a1a;
   cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
+  transition: border-color 0.25s; */
+/* } */
+/* button:hover {
   border-color: #646cff;
 }
 button:focus,
@@ -66,4 +66,45 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+} */
+
+button{
+  border: none;
+  cursor:pointer;
+}
+.menu{
+  background-color:red;
+  height:50px;
+  width:50px;
+  border-radius: 50%;
+  position:sticky;
+  top:35px;
+  float:right;
+  margin-right:10px;
+  /* remove when togglin is active */
+  z-index:2;
+}
+.menu-icon{
+  background-color:inherit;
+  height:25px;
+  width:25px;
+}
+#menu-details{
+background-color:green;
+height: 300px;
+width:300px;
+border-bottom-left-radius: 90%;
+position:fixed;
+top:0;
+right: 0;
+display:flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+}
+.card{
+  height: 100dvh;
+  width:500px;
+  background-color: pink;
+  text-align: center;
 }
