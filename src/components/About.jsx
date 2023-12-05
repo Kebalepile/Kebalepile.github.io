@@ -1,6 +1,7 @@
 import email from "../assets/img/email.svg";
 import facebook from "../assets/img/facebook.svg";
 import twitter from "../assets/img/twitter.svg";
+import github from "../assets/img/github.svg";
 
 export default function About() {
   return (
@@ -48,6 +49,14 @@ export default function About() {
           title="twitter handle"
         >
           <img src={twitter} alt="social media emoji" />
+        </a>
+        <a
+          className="media-handle"
+          href="#"
+          target="_blank"
+          title="github handle"
+        >
+          <img src={github} alt="social media emoji" />
         </a>
       </section>
       <br />
