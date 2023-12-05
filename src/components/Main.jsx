@@ -6,7 +6,9 @@ import Footer from "./Footer";
 export default function Main() {
   return (
     <>
+   
       <Menu />
+      <section className="banner card"></section>
       <About />
       <HustleInfo />
       <Projects />

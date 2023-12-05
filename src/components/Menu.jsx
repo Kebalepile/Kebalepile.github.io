@@ -6,7 +6,7 @@ export default function Menu() {
         <HiMenuAlt3 className="menu-icon" />
       </button>
       <article id="menu-details">
-        <ul>
+        <ul >
           <li>Home</li>
           <li>Portfolio</li>
           <li>Contact</li>

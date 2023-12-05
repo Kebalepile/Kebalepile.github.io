@@ -1,17 +1,21 @@
+
+@font-face {
+  font-family: "escher";
+  src: url("./assets/EscherHand.ttf") format("truetype");
+}
+
 * {
   margin: 0 auto;
   padding: 0;
   box-sizing: border-box;
-
-  font-family: cursive;
   line-height: 1.5;
-  font-weight: 400;
+  /* font-weight: 400; */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
-
+  font-family: "escher", sans-serif;
   --C1: #e69011;
   --C2: #f34506;
   --C3: rgb(4, 156, 4);
@@ -23,14 +27,6 @@
   color-scheme: light dark;
   color: var(--C7);
   background-color: var(--C6);
-}
-#root{
-  /* width:100dvw; */
-  /* height:100dvh; */
-  /* display: flex;
-  flex-direction: column; */
-
-
 }
 
 @keyframes logo-spin {
