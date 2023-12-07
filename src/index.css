@@ -21,8 +21,9 @@ button {
   border: none;
   cursor: pointer;
 }
+
 .menu {
-  background-color: #5f5f5f6b;
+  background-color: #5f5f5fea;
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -30,26 +31,40 @@ button {
   top: 35px;
   float: right;
   margin-right: 10px;
-  /* remove when togglin is active */
   z-index: 2;
+  transition: background-color 0.3s;
 }
+
+.menu:hover {
+  background-color: #5f5f5f;
+}
+
 .menu-icon {
   background-color: inherit;
   height: 25px;
   width: 25px;
+  vertical-align: middle;
+  border-radius: 2px;
 }
+
 #menu-details {
   background-color: #313030;
   height: 300px;
   width: 300px;
   border-bottom-left-radius: 90%;
   position: fixed;
-  top: 0;
-  right: 0;
+  top: -100%;
+  right: -100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  transition: top 1s, right 1s;
+}
+
+#menu-details.open {
+  top: 0;
+  right: 0;
 }
 #menu-details > ul {
   list-style-type: none;
@@ -68,8 +83,8 @@ button {
   border-bottom: 2px dotted white;
 }
 #menu-details li a {
-  background:none;
-  text-decoration:none;
+  background: none;
+  text-decoration: none;
 }
 .card {
   min-height: 50dvh;
@@ -78,9 +93,9 @@ button {
   text-align: center;
   padding: 20px;
 }
-.pad{
-  padding:15px;
-  border-radius:4px;
+.pad {
+  padding: 15px;
+  border-radius: 4px;
 }
 
 .banner {
@@ -106,16 +121,14 @@ button {
   --s: 140px;
   --c: #170409;
   --_g: #0000 52%, var(--c) 54% 57%, #0000 59%;
-  background-image: radial-gradient(farthest-side at -33.33% 50%, var(--_g)), 
-                    radial-gradient(farthest-side at 50% 133.33%, var(--_g)),
-                    radial-gradient(farthest-side at 133.33% 50%, var(--_g)),
-                    radial-gradient(farthest-side at 50% -33.33%, var(--_g));
-  background-size: calc(var(--s) / 4.667) var(--s), 
-                    var(--s) calc(var(--s) / 4.667);
-  background-position: 0 calc(var(--s) / 2),
-                       calc(var(--s) / 2) 0,
-                       calc(var(--s) / 4.667) 0,
-                       0 calc(var(--s) / 4.667);
+  background-image: radial-gradient(farthest-side at -33.33% 50%, var(--_g)),
+    radial-gradient(farthest-side at 50% 133.33%, var(--_g)),
+    radial-gradient(farthest-side at 133.33% 50%, var(--_g)),
+    radial-gradient(farthest-side at 50% -33.33%, var(--_g));
+  background-size: calc(var(--s) / 4.667) var(--s),
+    var(--s) calc(var(--s) / 4.667);
+  background-position: 0 calc(var(--s) / 2), calc(var(--s) / 2) 0,
+    calc(var(--s) / 4.667) 0, 0 calc(var(--s) / 4.667);
   background-repeat: repeat;
   animation: waveAnimation 20s linear infinite;
 }
@@ -142,8 +155,8 @@ button {
   justify-content: flex-start;
   align-items: flex-start;
   width: 220px;
-  padding:5px;
-  border-radius:6px;
+  padding: 5px;
+  border-radius: 6px;
 }
 
 .media-handle {
