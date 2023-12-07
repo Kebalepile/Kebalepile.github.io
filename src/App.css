@@ -29,6 +29,26 @@
   background-color: var(--C6);
 }
 
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  height: 4px;
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #6b6969;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #353535;
+  cursor: pointer;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #d6d6d6;
+  border-radius: 10px;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

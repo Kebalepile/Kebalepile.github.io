@@ -1,6 +1,6 @@
 export default function Projects() {
   return (
-    <div className="card">
+    <div id="repos" className="card">
       <h1>Projects</h1>
     </div>
   );
