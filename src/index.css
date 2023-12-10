@@ -31,7 +31,7 @@ button {
   top: 35px;
   float: right;
   margin-right: 10px;
-  z-index: 2;
+  z-index: 6;
   transition: background-color 0.3s;
 }
 
@@ -60,6 +60,7 @@ button {
   justify-content: center;
   align-items: center;
   transition: top 1s, right 1s;
+  z-index: 5;
 }
 
 #menu-details.open {
@@ -88,8 +89,6 @@ button {
 }
 .card {
   min-height: 50dvh;
-  /* width: 500px; */
-  /* background-color: pink; */
   text-align: center;
   padding: 20px;
 }
@@ -99,8 +98,8 @@ button {
 }
 
 .banner {
-  /* #67917a */
-  height: 30dvh;
+  width: 100dvw;
+  height: 50dvh;
   --s: 140px;
   --c: #170409;
   --_g: #0000 52%, var(--c) 54% 57%, #0000 59%;
@@ -180,6 +179,19 @@ footer {
   border-radius: 30%;
   width: 80%;
   margin-bottom: 15px;
+}
+
+#profile-pic {
+  width: 200px;
+  height: 200px;
+  border: none;
+  border-radius: 48%;
+  background: inherit;
+  box-shadow: 0px 0px 10px 2px #000000b7; /* horizontal offset, vertical offset, blur radius, spread radius, color */
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 /* key frames */
