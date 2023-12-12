@@ -1,7 +1,7 @@
 
 @font-face {
   font-family: "escher";
-  src: url("./assets/EscherHand.ttf") format("truetype");
+  src: url("./assets/fonts/EscherHand.ttf") format("truetype");
 }
 
 * {
@@ -9,7 +9,6 @@
   padding: 0;
   box-sizing: border-box;
   line-height: 1.5;
-  /* font-weight: 400; */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

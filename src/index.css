@@ -1,14 +1,14 @@
 @font-face {
   font-family: "grendel";
-  src: url("./assets/Grendel.ttf") format("truetype");
+  src: url("./assets/fonts/Grendel.ttf") format("truetype");
 }
 @font-face {
   font-family: "mother-board";
-  src: url("./assets/MotherBoard.ttf") format("truetype");
+  src: url("./assets/fonts/MotherBoard.ttf") format("truetype");
 }
 @font-face {
   font-family: "mother-nature-regular";
-  src: url("./assets/MotherNature.ttf") format("truetype");
+  src: url("./assets/fonts/MotherNature.ttf") format("truetype");
 }
 :root {
   font-synthesis: none;
