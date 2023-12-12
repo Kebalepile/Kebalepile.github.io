@@ -199,15 +199,18 @@ footer {
 }
 #repos {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  height: 400px;
+  height: 300px;
+  overflow-x: scroll;
+  padding:40px;
 }
 .repo {
   cursor: pointer;
   width: 100px;
   height: 80px;
+  margin:20px 20px 40px 20px ;
 }
 .repo figure {
   border-radius: 4px; 
@@ -215,6 +218,9 @@ footer {
 .repo figcaption {
   border-radius: 4px;
   background: #2e2e33b9;
+  overflow:hidden;
+  text-overflow: ellipsis;
+  white-space:nowrap;
 }
 .repo-image {
   width: 100px;
@@ -228,14 +234,12 @@ footer {
   border-radius: 5px;
 }
 .repo-info {
-  display: flex;
-  align-items: center;
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 .repo-info__img {
-  width: 80px;
-  height: 80px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
 }
 
@@ -249,14 +253,16 @@ footer {
 
 .repo-info__content p {
   margin: 10px 0;
+  text-align:left;
 }
 
 .repo-info__content a {
   display: inline-block;
   padding: 8px 16px;
-  background-color: pink;
-  color: white;
+  background-color: rgb(173, 231, 64);
+  color:black;
   text-decoration: none;
+  border-radius:3px;
 }
 
 .dialog-overlay {
@@ -270,23 +276,29 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  border:none;
+  border-radius:4px;
 }
 
 .dialog-content {
-  background-color: white;
   padding: 20px;
   border-radius: 4px;
+  max-width:400px;
 }
 
 .dialog-close {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background-color: pink;
-  color: white;
+  background-color: #e63351;
   border: none;
-  padding: 8px 16px;
   cursor: pointer;
+  border-radius:50px 4px 4px 4px;
+  text-align:center;
+  vertical-align: middle;
+  padding-left:5px;
+  width:50px;
+  height:30px; 
 }
 /* key frames */
 @keyframes gradientAnimation {

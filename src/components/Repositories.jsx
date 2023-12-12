@@ -23,12 +23,14 @@ export default function Repositories() {
   const RepoInfo = ({ data }) => {
     return (
       <div className="repo-info">
-        <img src={images[data?.i]} alt="repo icon" className="repo-info__img" />
+        <img src={images[data?.i]} loading="lazy" alt="repo icon" className="repo-info__img" />
         <div className="repo-info__content">
           <h2>{data?.name}</h2>
+          <br/>
+          <hr className="line" style={{width:"45%", borderRadius:"2px"}}/>
           <p>{data?.description}</p>
           <a href={data?.url} target="_blank" rel="noopener noreferrer">
-            Visit Website
+            Open Web Application
           </a>
         </div>
       </div>
@@ -71,9 +73,10 @@ export default function Repositories() {
             <dialog open className="dialog-overlay">
             <div className="dialog-content">
               <button className="dialog-close" onClick={() => toggleDialog(d)}>
-                Close
+                X
               </button>
               <RepoInfo data={{...d,i}} />
+              <br/>
             </div>
           </dialog>
           )}
