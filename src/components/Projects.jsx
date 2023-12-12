@@ -1,7 +1,10 @@
+import Repositories from "./Repositories";
 export default function Projects() {
   return (
-    <div id="repos" className="card">
+    <div id="projects">
       <h1>Projects</h1>
+      <hr className="line" />
+      <Repositories />
     </div>
   );
 }
