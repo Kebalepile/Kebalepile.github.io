@@ -236,17 +236,18 @@ footer {
   border-radius: 5px;
 }
 .repo-info {
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .repo-info__img {
-  width: 180px;
-  height: 180px;
+  /* margin-top:20px; */
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
 }
 
 .repo-info__content {
-  margin-left: 20px;
+  margin: 5px;
 }
 
 .repo-info__content h2 {
@@ -272,7 +273,8 @@ footer {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%;
+  /* height: 100%; */
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(5px);
   display: flex;
@@ -281,6 +283,7 @@ footer {
   border: none;
   border-radius: 4px;
   z-index: 7;
+  overflow-x: scroll;
 }
 
 .dialog-content {
@@ -314,7 +317,12 @@ footer {
     width: 100%;
   }
 }
-
+@media screen and (max-width: 320px) {
+  .dialog-content {
+    height: 100dvh;
+    overflow-x: scroll;
+  }
+}
 /* key frames */
 @keyframes gradientAnimation {
   0% {
@@ -347,6 +355,7 @@ footer {
     transform: scale(1);
   }
 }
+/* suspense component css */
 
 .loadingDiv {
   position: relative;
@@ -356,7 +365,7 @@ footer {
 }
 
 .loadingDiv:before {
-  content: 'loading';
+  content: "loading";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -364,7 +373,7 @@ footer {
 }
 
 .loadingDiv:after {
-  content: '';
+  content: "";
   display: block;
   margin: 20px auto;
   width: 100px;
@@ -373,5 +382,4 @@ footer {
   border-radius: 50%;
   border-top: 6px solid #3498db;
   animation: spin 2s linear infinite;
-  
 }

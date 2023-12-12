@@ -2,7 +2,10 @@ import heartSvg from "../assets/img/heart.svg";
 export default function HustleInfo() {
   return (
     <div className="card animation">
-      <h2 className="header pad">I <img  id="heartBalloon" src={heartSvg} alt="heart emoji"/> working with small businesses</h2>
+      <h2 className="header pad">
+        I <img id="heartBalloon" src={heartSvg} alt="heart emoji" /> working
+        with small businesses
+      </h2>
       <br />
       <p id="hustle-info" className="details pad">
         I specialize in creating sites for individuals and small businesses. You

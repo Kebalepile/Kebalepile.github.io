@@ -19,19 +19,19 @@ export default function MediaHandles() {
 
       <a
         className="media-handle"
-        href="#"
+        href="https://m.facebook.com/profile.php/?id=61554153384198"
         target="_blank"
         rel="noopener noreferrer"
-        title="facebook profile link"
+        title="https://m.facebook.com/profile.php/?id=61554153384198"
       >
         <img src={facebook} alt="social media emoji" />
       </a>
       <a
         className="media-handle"
-        href="#"
+        href="https://twitter.com/Tmotshoana"
         target="_blank"
         rel="noopener noreferrer"
-        title="twitter handle"
+        title="https://twitter.com/Tmotshoana"
       >
         <img src={twitter} alt="social media emoji" />
       </a>

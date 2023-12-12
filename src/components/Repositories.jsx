@@ -1,34 +1,35 @@
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { data } from "../utils/data";
+import a from "../assets/img/repositories/1.jpg";
+import b from "../assets/img/repositories/2.png";
+import c from "../assets/img/repositories/4.png";
+import d from "../assets/img/repositories/5.png";
+import e from "../assets/img/repositories/3.png";
 
 export default function Repositories() {
-  const [images, setImages] = useState([]);
+  let [images, setImages] = useState([]);
   const [selectedRepo, setSelectedRepo] = useState(null);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      const imagePromises = data.map(async (d) => {
-        const img = await import(/* @vite-ignore */ d.imgSrc);
-        return img.default;
-      });
-
-      const images = await Promise.all(imagePromises);
-      setImages(images);
-    };
-
-    fetchImages();
+    setImages([a, b, c, d, e]);
   }, []);
 
   const RepoInfo = ({ data }) => {
     return (
       <div className="repo-info">
-        <img src={images[data?.i]} loading="lazy" alt="repo icon" className="repo-info__img" />
+        <img
+          src={images[data?.i]}
+          loading="lazy"
+          alt="repo icon"
+          className="repo-info__img"
+        />
         <div className="repo-info__content">
           <h2>{data?.name}</h2>
-          <br/>
-          <hr className="line" style={{width:"45%", borderRadius:"2px"}}/>
+          <br />
+          <hr className="line" style={{ width: "45%", borderRadius: "2px" }} />
           <p>{data?.description}</p>
+          <br />
           <a href={data?.url} target="_blank" rel="noopener noreferrer">
             Open Web Application
           </a>
@@ -36,14 +37,13 @@ export default function Repositories() {
       </div>
     );
   };
-  
- 
+
   RepoInfo.propTypes = {
     data: PropTypes.shape({
       name: PropTypes.string,
       description: PropTypes.string,
       url: PropTypes.string,
-      i:PropTypes.number
+      i: PropTypes.number
     })
   };
 
@@ -71,14 +71,17 @@ export default function Repositories() {
           </figure>
           {selectedRepo === d && (
             <dialog open className="dialog-overlay">
-            <div className="dialog-content">
-              <button className="dialog-close" onClick={() => toggleDialog(d)}>
-                X
-              </button>
-              <RepoInfo data={{...d,i}} />
-              <br/>
-            </div>
-          </dialog>
+              <div className="dialog-content">
+                <button
+                  className="dialog-close"
+                  onClick={() => toggleDialog(d)}
+                >
+                  X
+                </button>
+                <RepoInfo data={{ ...d, i }} />
+                <br />
+              </div>
+            </dialog>
           )}
         </div>
       ))}
