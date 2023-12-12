@@ -46,6 +46,7 @@
 ::-webkit-scrollbar-thumb:hover {
   background-color: #d6d6d6;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 @keyframes logo-spin {
