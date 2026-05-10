@@ -997,16 +997,9 @@ class LiveStreamManager {
       throw error;
     }
 
-    this.connectSignaling();
-    if (canPlayRelay()) {
-      this.setupRelayPlayback();
-      this.sendSignalingMessage({
-        type: "stream:relay-subscribe"
-      });
-    } else {
-      this.viewerPeerConnection = this.createPeerConnection();
-    }
-    this.notify("viewer-joined", response);
+  this.connectSignaling();
+this.viewerPeerConnection = this.createPeerConnection();
+this.notify("viewer-joined", response);
 
     return response;
   }
@@ -1246,14 +1239,19 @@ class LiveStreamManager {
       return;
     }
 
-    if (message.type === "stream:broadcaster-ready") {
-      if (!this.isBroadcaster) {
-        this.notify("broadcaster-ready", message);
-        await this.rejoinStream(message.streamId);
-      }
+  if (message.type === "stream:broadcaster-ready") {
+  if (!this.isBroadcaster) {
+    this.notify("broadcaster-ready", message);
 
-      return;
+    // Do not rejoin if we are already in this stream.
+    // Rejoining closes the existing peer connection and causes buffering/reconnect loops.
+    if (!this.streamId) {
+      await this.joinStream(message.streamId);
     }
+  }
+
+  return;
+}
 
     if (message.type === "stream:viewer-left" || message.type === "stream:viewer-count") {
       if (message.type === "stream:viewer-left") {
