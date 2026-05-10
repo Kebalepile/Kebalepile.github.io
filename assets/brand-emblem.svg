@@ -1,0 +1,116 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 220 220"
+  role="img"
+  aria-labelledby="bp-emblem-title bp-emblem-desc"
+>
+  <title id="bp-emblem-title">Boitekong Pulse emblem</title>
+  <desc id="bp-emblem-desc">
+    A circular Boitekong Pulse logo with Boitekong on the top arc, Pulse on the bottom arc, and a township scene with a mountain and tree in the center.
+  </desc>
+
+  <defs>
+    <linearGradient id="bp-emblem-ring" x1="24" y1="18" x2="194" y2="198" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563eb" />
+      <stop offset="0.55" stop-color="#0f3d63" />
+      <stop offset="1" stop-color="#0b7285" />
+    </linearGradient>
+
+    <linearGradient id="bp-emblem-sky" x1="110" y1="46" x2="110" y2="180" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#dbeafe" />
+      <stop offset="0.55" stop-color="#fef3c7" />
+      <stop offset="1" stop-color="#e7f7ef" />
+    </linearGradient>
+
+    <clipPath id="bp-emblem-center-clip">
+      <circle cx="110" cy="110" r="63" />
+    </clipPath>
+
+    <path id="bp-emblem-top-arc" d="M 40 110 A 70 70 0 0 1 180 110" />
+    <path id="bp-emblem-bottom-arc" d="M 40 110 A 70 70 0 0 0 180 110" />
+  </defs>
+
+  <circle cx="110" cy="110" r="106" fill="url(#bp-emblem-ring)" />
+  <circle cx="110" cy="110" r="88" fill="#0f172a" opacity="0.18" />
+  <circle cx="110" cy="110" r="80" fill="#0f3d63" />
+  <circle cx="110" cy="110" r="69" fill="#f8fafc" stroke="#bfdbfe" stroke-width="2" />
+
+  <circle cx="32" cy="110" r="4" fill="#f97316" />
+  <circle cx="188" cy="110" r="4" fill="#f97316" />
+
+  <g clip-path="url(#bp-emblem-center-clip)">
+    <rect x="0" y="0" width="220" height="220" fill="url(#bp-emblem-sky)" />
+    <circle cx="145" cy="82" r="18" fill="#f59e0b" opacity="0.85" />
+
+    <path
+      d="M48 140 L84 94 L104 118 L138 78 L176 140 Z"
+      fill="#2563eb"
+    />
+    <path
+      d="M62 142 L92 112 L108 128 L132 96 L160 142 Z"
+      fill="#0f766e"
+      opacity="0.95"
+    />
+
+    <path
+      d="M28 170 C54 142 80 128 108 138 C130 146 154 138 192 120 L192 188 L28 188 Z"
+      fill="#22c55e"
+    />
+    <path
+      d="M30 178 C58 154 88 144 112 150 C140 158 164 148 194 136 L194 188 L30 188 Z"
+      fill="#166534"
+      opacity="0.86"
+    />
+
+    <path
+      d="M110 188 V156"
+      fill="none"
+      stroke="#dbeafe"
+      stroke-linecap="round"
+      stroke-width="8"
+    />
+    <path
+      d="M110 162 C100 157 90 154 80 151"
+      fill="none"
+      stroke="#dbeafe"
+      stroke-linecap="round"
+      stroke-width="6"
+    />
+    <path
+      d="M110 160 C120 156 130 154 140 152"
+      fill="none"
+      stroke="#dbeafe"
+      stroke-linecap="round"
+      stroke-width="6"
+    />
+
+    <g stroke="#9a3412" stroke-linejoin="round" stroke-width="3">
+      <path d="M58 162 L76 148 L94 162 V179 H58 Z" fill="#fff7ed" />
+      <path d="M95 156 L115 141 L135 156 V179 H95 Z" fill="#fff7ed" />
+      <path d="M139 164 L155 152 L171 164 V179 H139 Z" fill="#fff7ed" />
+    </g>
+
+    <path d="M58 162 L76 148 L94 162 Z" fill="#f97316" />
+    <path d="M95 156 L115 141 L135 156 Z" fill="#ea580c" />
+    <path d="M139 164 L155 152 L171 164 Z" fill="#fb923c" />
+
+    <rect x="74" y="122" width="9" height="24" rx="3" fill="#7c2d12" />
+    <circle cx="79" cy="116" r="15" fill="#15803d" />
+    <circle cx="66" cy="123" r="11" fill="#166534" />
+    <circle cx="92" cy="123" r="11" fill="#22c55e" />
+  </g>
+
+  <g
+    font-family="Aptos Display, Aptos, Segoe UI, Arial, sans-serif"
+    font-weight="800"
+    text-rendering="geometricPrecision"
+    paint-order="stroke"
+  >
+    <text font-size="18" letter-spacing="3.2" fill="#f8fafc" stroke="#0f3d63" stroke-width="2.4">
+      <textPath href="#bp-emblem-top-arc" startOffset="50%" text-anchor="middle">BOITEKONG</textPath>
+    </text>
+    <text font-size="18" letter-spacing="4.4" fill="#fde68a" stroke="#0f3d63" stroke-width="2.4" dy="11">
+      <textPath href="#bp-emblem-bottom-arc" startOffset="50%" text-anchor="middle">PULSE</textPath>
+    </text>
+  </g>
+</svg>

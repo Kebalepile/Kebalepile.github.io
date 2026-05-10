@@ -1,0 +1,41 @@
+{
+  "id": "./",
+  "name": "yahneh",
+  "short_name": "yahneh",
+  "description": "A township-first platform for local posts, replies, voice notes, and real updates across South Africa.",
+  "lang": "en-ZA",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display_override": ["standalone", "minimal-ui", "browser"],
+  "display": "standalone",
+  "orientation": "portrait",
+  "prefer_related_applications": false,
+  "background_color": "#fff7fb",
+  "theme_color": "#ff4fa3",
+  "icons": [
+    {
+      "src": "assets/logo/yahneh-pwa-circle-192.png?v=20260508-3",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo/yahneh-pwa-circle-192.png?v=20260508-3",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/logo/yahneh-pwa-circle-512.png?v=20260508-3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/logo/yahneh-pwa-circle-512.png?v=20260508-3",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
