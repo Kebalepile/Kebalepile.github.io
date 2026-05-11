@@ -10,12 +10,12 @@ const ICE_SERVERS = [
 const CAMERA_VIDEO_WIDTH = 854;
 const CAMERA_VIDEO_HEIGHT = 480;
 const CAMERA_VIDEO_FRAMERATE = 24;
-const CAMERA_VIDEO_MAX_BITRATE = 350_000;
-const SCREEN_VIDEO_MAX_BITRATE = 600_000;
-const AUDIO_MAX_BITRATE = 32_000;
-const RELAY_TRANSPORT_ENABLED = false;
-const RELAY_CHUNK_INTERVAL_MS = 250;
-const RELAY_VIDEO_BITRATE = 500_000;
+const CAMERA_VIDEO_MAX_BITRATE = 850_000;
+const SCREEN_VIDEO_MAX_BITRATE = 1_200_000;
+const AUDIO_MAX_BITRATE = 48_000;
+const RELAY_TRANSPORT_ENABLED = true;
+const RELAY_CHUNK_INTERVAL_MS = 1000;
+const RELAY_VIDEO_BITRATE = 750_000;
 const RELAY_AUDIO_BITRATE = 48_000;
 const ADAPTIVE_QUALITY_INTERVAL_MS = 5000;
 const ADAPTIVE_QUALITY_STABLE_SAMPLES = 3;
@@ -997,9 +997,16 @@ class LiveStreamManager {
       throw error;
     }
 
-  this.connectSignaling();
-this.viewerPeerConnection = this.createPeerConnection();
-this.notify("viewer-joined", response);
+    this.connectSignaling();
+    if (canPlayRelay()) {
+      this.setupRelayPlayback();
+      this.sendSignalingMessage({
+        type: "stream:relay-subscribe"
+      });
+    } else {
+      this.viewerPeerConnection = this.createPeerConnection();
+    }
+    this.notify("viewer-joined", response);
 
     return response;
   }
@@ -1239,19 +1246,14 @@ this.notify("viewer-joined", response);
       return;
     }
 
-  if (message.type === "stream:broadcaster-ready") {
-  if (!this.isBroadcaster) {
-    this.notify("broadcaster-ready", message);
+    if (message.type === "stream:broadcaster-ready") {
+      if (!this.isBroadcaster) {
+        this.notify("broadcaster-ready", message);
+        await this.rejoinStream(message.streamId);
+      }
 
-    // Do not rejoin if we are already in this stream.
-    // Rejoining closes the existing peer connection and causes buffering/reconnect loops.
-    if (!this.streamId) {
-      await this.joinStream(message.streamId);
+      return;
     }
-  }
-
-  return;
-}
 
     if (message.type === "stream:viewer-left" || message.type === "stream:viewer-count") {
       if (message.type === "stream:viewer-left") {

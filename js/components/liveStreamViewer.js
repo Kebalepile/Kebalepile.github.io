@@ -25,7 +25,7 @@ export class LiveStreamViewer {
     this.durationTimerId = null;
     this.cleanupFns = [];
     this.hasLeftStream = false;
-    this.audioMuted = false;
+    this.audioMuted = true;
     this.videoHidden = false;
     this.mobileReactionsOpen = false;
     this.streamerMediaState = {
@@ -133,7 +133,7 @@ export class LiveStreamViewer {
       type: "button",
       text: "Leave stream"
     });
-    this.video = createLiveVideo({ id: "viewer-video" });
+    this.video = createLiveVideo({ id: "viewer-video", muted: true });
     const videoBody = createElement("div", { className: "live-video-body" });
     const videoPlaceholder = createElement("div", { className: "live-video-feed live-video-placeholder" });
     const videoPlaceholderLogo = createElement("img", {
@@ -402,6 +402,7 @@ export class LiveStreamViewer {
         clearRelayFallbackTimer();
         this.video.srcObject = remoteStream;
         this.video.muted = this.audioMuted;
+        void this.video.play?.().catch(() => {});
         setConnectionStatus("Connected", { loading: false });
       }),
       liveStreamManager.on("relay-playback-ready", ({ objectUrl }) => {
