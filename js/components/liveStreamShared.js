@@ -271,6 +271,7 @@ export function createLiveChatPanel({
         text: message.text || ""
       });
 
+      message.muted = Boolean(message.muted);
       meta.appendChild(author);
 
       if (canModerateMessage(message)) {
@@ -291,12 +292,18 @@ export function createLiveChatPanel({
           }
         });
         const makeActionButton = ({ action, label, danger = false }) => {
+          const actionLabel =
+            action === "like"
+              ? "\uD83D\uDC4D Like"
+              : action === "heart"
+                ? "\u2764\uFE0F Heart"
+                : label;
           const button = createElement("button", {
             className: danger
               ? "live-chat-message-menu-item live-chat-message-menu-item-danger"
               : "live-chat-message-menu-item",
             type: "button",
-            text: label
+            text: actionLabel
           });
 
           button.addEventListener("click", (event) => {
@@ -304,7 +311,20 @@ export function createLiveChatPanel({
             event.stopPropagation();
             menu.hidden = true;
             menuButton.setAttribute("aria-expanded", "false");
-            onModerationAction(action, message, row);
+
+            const selectedAction =
+              action === "mute"
+                ? message.muted
+                  ? "unmute"
+                  : "mute"
+                : action;
+
+            if (action === "mute") {
+              message.muted = !message.muted;
+              button.textContent = message.muted ? "Unmute" : "Mute";
+            }
+
+            onModerationAction(selectedAction, message, row);
           });
           return button;
         };
@@ -312,7 +332,7 @@ export function createLiveChatPanel({
         menu.append(
           makeActionButton({ action: "like", label: "👍🏾" }),
           makeActionButton({ action: "heart", label: "❤️" }),
-          makeActionButton({ action: "mute", label: "🤫" }),
+          makeActionButton({ action: "mute", label: message.muted ? "Unmute" : "Mute" }),
           makeActionButton({ action: "kick", label: "Kick out", danger: true })
         );
         menuButton.addEventListener("click", (event) => {

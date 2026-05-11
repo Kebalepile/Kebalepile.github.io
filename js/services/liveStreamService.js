@@ -838,6 +838,12 @@ class LiveStreamManager {
     });
   }
 
+  async unmuteViewer(streamId, viewerId) {
+    return apiRequest(`/livestreams/${streamId}/viewers/${viewerId}/unmute`, {
+      method: "POST"
+    });
+  }
+
   async kickViewer(streamId, viewerId) {
     return apiRequest(`/livestreams/${streamId}/viewers/${viewerId}/kick`, {
       method: "POST"

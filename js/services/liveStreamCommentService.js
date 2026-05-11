@@ -5,6 +5,7 @@ class LiveStreamCommentService {
   constructor() {
     this.commentListeners = new Set();
     this.reactionListeners = new Set();
+    this.moderationListeners = new Set();
     this.unsubscribeRealtime = registerMessageListener("stream:*", (message) => {
       if (message.type === "stream:comment") {
         this.commentListeners.forEach((callback) => callback(message));
@@ -12,6 +13,17 @@ class LiveStreamCommentService {
 
       if (message.type === "stream:reaction") {
         this.reactionListeners.forEach((callback) => callback(message));
+      }
+
+      if (message.type === "stream:comment-moderation" || message.type === "stream:viewer-unmuted") {
+        const currentUser = getAuthenticatedUser();
+        const currentUserId = currentUser?.id || currentUser?._id || "";
+
+        if (message.targetUserId && String(message.targetUserId) !== String(currentUserId)) {
+          return;
+        }
+
+        this.moderationListeners.forEach((callback) => callback(message));
       }
     });
   }
@@ -60,10 +72,20 @@ class LiveStreamCommentService {
     return () => this.reactionListeners.delete(callback);
   }
 
+  onModerationNotification(callback) {
+    if (typeof callback !== "function") {
+      return () => {};
+    }
+
+    this.moderationListeners.add(callback);
+    return () => this.moderationListeners.delete(callback);
+  }
+
   cleanup() {
     this.unsubscribeRealtime?.();
     this.commentListeners.clear();
     this.reactionListeners.clear();
+    this.moderationListeners.clear();
   }
 }
 

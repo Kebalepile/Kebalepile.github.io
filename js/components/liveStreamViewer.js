@@ -25,7 +25,7 @@ export class LiveStreamViewer {
     this.durationTimerId = null;
     this.cleanupFns = [];
     this.hasLeftStream = false;
-    this.audioMuted = true;
+    this.audioMuted = false;
     this.videoHidden = false;
     this.mobileReactionsOpen = false;
     this.streamerMediaState = {
@@ -133,7 +133,7 @@ export class LiveStreamViewer {
       type: "button",
       text: "Leave stream"
     });
-    this.video = createLiveVideo({ id: "viewer-video", muted: true });
+    this.video = createLiveVideo({ id: "viewer-video", muted: false });
     const videoBody = createElement("div", { className: "live-video-body" });
     const videoPlaceholder = createElement("div", { className: "live-video-feed live-video-placeholder" });
     const videoPlaceholderLogo = createElement("img", {
@@ -345,6 +345,8 @@ export class LiveStreamViewer {
 
       if (this.video) {
         this.video.muted = this.audioMuted;
+        this.video.defaultMuted = this.audioMuted;
+        this.video.volume = this.audioMuted ? 0 : 1;
         this.video.classList.toggle("live-video-feed-hidden", shouldShowLogo);
       }
 
@@ -428,6 +430,9 @@ export class LiveStreamViewer {
         this.video.autoplay = true;
         this.video.playsInline = true;
         this.video.muted = this.audioMuted;
+        this.video.defaultMuted = this.audioMuted;
+        this.video.volume = this.audioMuted ? 0 : 1;
+        void this.video.play?.().catch(() => {});
         setConnectionStatus("Connected", { loading: false });
       }),
       liveStreamManager.on("relay-playback-ready", ({ objectUrl }) => {
@@ -435,6 +440,8 @@ export class LiveStreamViewer {
         this.video.srcObject = null;
         this.video.src = objectUrl;
         this.video.muted = this.audioMuted;
+        this.video.defaultMuted = this.audioMuted;
+        this.video.volume = this.audioMuted ? 0 : 1;
         setConnectionStatus("Buffering stream...");
         scheduleRelayStartCheck();
         scheduleRelayFallback();
@@ -449,6 +456,9 @@ export class LiveStreamViewer {
         console.log("[LiveStreamViewer] Relay stream added - relay connected");
         clearRelayFallbackTimer();
         clearRelayStartCheckTimer();
+        this.video.muted = this.audioMuted;
+        this.video.defaultMuted = this.audioMuted;
+        this.video.volume = this.audioMuted ? 0 : 1;
         void this.video.play?.().catch(() => {});
         setConnectionStatus("Connected", { loading: false });
       }),
@@ -506,7 +516,7 @@ export class LiveStreamViewer {
       }),
       liveStreamManager.on("viewer-kicked", () => {
         showToast("You were removed from this live stream.", "error");
-        this.renderError("You were removed from this live stream.");
+        navigate("feed");
       }),
       liveStreamCommentService.onComment((comment) => {
         if (comment.streamId === this.streamId) {
@@ -526,6 +536,27 @@ export class LiveStreamViewer {
           addMobileOverlayItem({
             className: "mobile-live-overlay-reaction",
             text: reaction.reactionType || "Reacted"
+          });
+        }
+      }),
+      liveStreamCommentService.onModerationNotification((notification) => {
+        if (notification.streamId !== this.streamId) {
+          return;
+        }
+
+        if (notification.type === "stream:viewer-unmuted") {
+          showToast(`${notification.streamerName || "Streamer"} unmuted you.`, "success");
+          return;
+        }
+
+        if (notification.action === "like" || notification.action === "heart") {
+          const verb = notification.action === "heart" ? "hearted" : "liked";
+          const text = `${notification.streamerName || "Streamer"} ${verb} your message.`;
+
+          showToast(text, "success");
+          addMobileOverlayItem({
+            className: "mobile-live-overlay-reaction",
+            text
           });
         }
       })

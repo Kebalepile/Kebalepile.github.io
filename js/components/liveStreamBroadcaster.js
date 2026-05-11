@@ -1,6 +1,7 @@
 import { liveStreamManager } from "../services/liveStreamService.js";
 import { liveStreamCommentService } from "../services/liveStreamCommentService.js";
 import { logoutUser } from "../services/authService.js";
+import { broadcast } from "../services/liveSyncService.js";
 import { navigate } from "../router.js";
 import { clearElement, createElement } from "../utils/dom.js";
 import {
@@ -52,6 +53,7 @@ export class LiveStreamBroadcaster {
     this.chat = null;
     this.cleanupFns = [];
     this.durationTimerId = null;
+    this.viewerMuteState = new Map();
   }
 
   initialize() {
@@ -564,21 +566,45 @@ export class LiveStreamBroadcaster {
       String(message.userId || "") === String(this.currentUser?.id || this.currentUser?._id || "");
     const handleChatModerationAction = async (action, message = {}, row = null) => {
       const viewerId = String(message.userId || "").trim();
-
-      if (action === "like" || action === "heart") {
-        row?.classList.add(action === "heart" ? "live-chat-message-hearted" : "live-chat-message-liked");
-        return;
-      }
+      const streamerName = this.currentUser?.username || "Streamer";
+      const isMuted = this.viewerMuteState.get(viewerId) === true;
 
       if (!viewerId) {
         showToast("Could not find that viewer.", "error");
         return;
       }
 
+      if (action === "like" || action === "heart") {
+        row?.classList.add(action === "heart" ? "live-chat-message-hearted" : "live-chat-message-liked");
+        broadcast({
+          type: "stream:comment-moderation",
+          streamId: this.stream.id,
+          targetUserId: viewerId,
+          action,
+          streamerName,
+          text: message.text || "",
+          timestamp: Date.now()
+        });
+        return;
+      }
+
       try {
         if (action === "mute") {
+          if (isMuted) {
+            showToast(`${message.username || "Viewer"} is already muted.`, "info");
+            return;
+          }
+
           await liveStreamManager.muteViewer(this.stream.id, viewerId);
+          this.viewerMuteState.set(viewerId, true);
           showToast(`${message.username || "Viewer"} muted.`, "success");
+          return;
+        }
+
+        if (action === "unmute") {
+          await liveStreamManager.unmuteViewer(this.stream.id, viewerId);
+          this.viewerMuteState.set(viewerId, false);
+          showToast(`${message.username || "Viewer"} unmuted.`, "success");
           return;
         }
 
@@ -759,6 +785,7 @@ export class LiveStreamBroadcaster {
       }),
       liveStreamCommentService.onComment((comment) => {
         if (comment.streamId === this.stream.id) {
+          comment.muted = this.viewerMuteState.get(String(comment.userId || "")) === true;
           this.chat.addMessage(comment);
           addChatOverlayItem(comment);
 

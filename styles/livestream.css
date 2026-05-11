@@ -1031,7 +1031,7 @@
   bottom: 0.85rem;
   width: clamp(54px, 28%, 72px);
   aspect-ratio: 1;
-  background: rgba(255, 255, 255, 0.94) url("../assets/logo/yahneh-icon.png") center / contain no-repeat;
+  background: rgba(255, 255, 255, 0.94) url("../assets/stream-logo-transparent.png") center / contain no-repeat;
   border: 2px solid rgba(255, 255, 255, 0.56);
   border-radius: 8px;
   box-shadow:
