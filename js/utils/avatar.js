@@ -9,6 +9,8 @@ const AVATAR_PALETTE = [
   { background: "linear-gradient(180deg, #fee2e2 0%, #fecaca 100%)", color: "#b91c1c" }
 ];
 
+const brokenAvatarUrls = new Set();
+
 export function createAvatarElement(user, { size = "md", className = "", decorative = false } = {}) {
   const avatar = createElement("div", {
     className: `avatar avatar-${size}${className ? ` ${className}` : ""}`
@@ -23,7 +25,7 @@ export function createAvatarElement(user, { size = "md", className = "", decorat
         : "";
   const avatarLabel = user?.username || "User avatar";
 
-  if (avatarSource) {
+  if (avatarSource && !brokenAvatarUrls.has(avatarSource)) {
     const image = document.createElement("img");
     image.className = "avatar-image";
     image.src = avatarSource;
@@ -36,6 +38,7 @@ export function createAvatarElement(user, { size = "md", className = "", decorat
     }
 
     image.addEventListener("error", () => {
+      brokenAvatarUrls.add(avatarSource);
       avatar.replaceChildren();
       applyAvatarPlaceholder(avatar, user, avatarLabel, decorative);
     });

@@ -1152,6 +1152,15 @@ class LiveStreamManager {
       });
     };
 
+    if (!this.isBroadcaster) {
+      try {
+        peerConnection.addTransceiver("video", { direction: "recvonly" });
+        peerConnection.addTransceiver("audio", { direction: "recvonly" });
+      } catch {
+        // Some older browsers do not support addTransceiver; fall back to default WebRTC behavior.
+      }
+    }
+
     return peerConnection;
   }
 
