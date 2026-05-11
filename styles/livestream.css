@@ -864,9 +864,7 @@
   min-width: auto;
   overflow: hidden;
   position: absolute;
-  left: 50%;
-  bottom: calc(100% + 0.25rem);
-  transform: translateX(-50%);
+  transform: translate(-100%, -50%);
   z-index: 20;
 }
 
