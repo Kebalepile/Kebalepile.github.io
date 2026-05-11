@@ -801,12 +801,11 @@
   position: relative;
 }
 
-.live-chat-message-liked {
-  box-shadow: inset 3px 0 0 #14b8a6;
-}
-
-.live-chat-message-hearted {
-  box-shadow: inset 3px 0 0 #ff4fa3;
+.live-chat-message-liked,
+.live-chat-message-hearted,
+.live-chat-message-muted,
+.live-chat-message-kicked {
+  box-shadow: none;
 }
 
 .live-chat-message-meta {
@@ -860,12 +859,13 @@
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
-  display: grid;
-  min-width: 11rem;
+  display: flex;
+  gap: 0.25rem;
+  min-width: auto;
   overflow: hidden;
   position: absolute;
   right: 0;
-  top: calc(100% + 0.28rem);
+  bottom: calc(100% + 0.25rem);
   z-index: 20;
 }
 
@@ -893,6 +893,18 @@
 
 .live-chat-message-menu-item-danger {
   color: #dc2626;
+}
+
+.live-chat-message-status {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.live-chat-message-has-status {
+  padding-right: 2rem;
 }
 
 .live-chat-text {
