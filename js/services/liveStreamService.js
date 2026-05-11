@@ -286,6 +286,7 @@ class LiveStreamManager {
     this.relayAppendQueue = [];
     this.relayPlaybackStarted = false;
     this.relayOutboundKbps = 0;
+    this.pendingIceCandidates = new Map();
   }
 
   async openBroadcastMedia() {
@@ -1082,6 +1083,40 @@ class LiveStreamManager {
     });
   }
 
+  queueIceCandidate(userId = "", candidate) {
+    if (!candidate) {
+      return;
+    }
+
+    const safeUserId = String(userId || "").trim();
+    const queuedCandidates = this.pendingIceCandidates.get(safeUserId) || [];
+    queuedCandidates.push(candidate);
+    this.pendingIceCandidates.set(safeUserId, queuedCandidates);
+  }
+
+  async flushPendingIceCandidates(userId = "", peerConnection) {
+    if (!peerConnection || !peerConnection.remoteDescription || !peerConnection.remoteDescription.type) {
+      return;
+    }
+
+    const safeUserId = String(userId || "").trim();
+    const queuedCandidates = this.pendingIceCandidates.get(safeUserId);
+
+    if (!Array.isArray(queuedCandidates) || queuedCandidates.length === 0) {
+      return;
+    }
+
+    this.pendingIceCandidates.delete(safeUserId);
+
+    for (const candidate of queuedCandidates) {
+      try {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch {
+        // Ignore candidates that still fail after remote description is available.
+      }
+    }
+  }
+
   createPeerConnection(targetUserId = "") {
     const peerConnection = new RTCPeerConnection({ iceServers: ICE_SERVERS });
 
@@ -1329,6 +1364,7 @@ class LiveStreamManager {
       await this.viewerPeerConnection.setRemoteDescription(
         new RTCSessionDescription(message.offer)
       );
+      await this.flushPendingIceCandidates(message.userId, this.viewerPeerConnection);
       const answer = await this.viewerPeerConnection.createAnswer();
       await this.viewerPeerConnection.setLocalDescription(answer);
       this.sendSignalingMessage({
@@ -1344,6 +1380,7 @@ class LiveStreamManager {
 
       if (peerConnection) {
         await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
+        await this.flushPendingIceCandidates(message.userId, peerConnection);
       }
 
       return;
@@ -1354,8 +1391,12 @@ class LiveStreamManager {
         ? this.broadcasterPeerConnections.get(message.userId)
         : this.viewerPeerConnection;
 
-      if (peerConnection && message.candidate) {
-        await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+      if (message.candidate) {
+        if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
+          await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
+        } else {
+          this.queueIceCandidate(message.userId, message.candidate);
+        }
       }
     }
   }
@@ -1618,6 +1659,7 @@ class LiveStreamManager {
     this.canSwitchCamera = false;
     this.cameraDevices = [];
     this.videoQualityLevel = "high";
+    this.pendingIceCandidates.clear();
   }
 
   cleanup() {
