@@ -10,8 +10,8 @@
   "display": "standalone",
   "orientation": "portrait",
   "prefer_related_applications": false,
-  "background_color": "#ff7220",
-  "theme_color": "#ff4fa3",
+  "background_color": "#ffffff",
+  "theme_color": "#1d75f9dc",
   "icons": [
     {
       "src": "assets/logo/yahneh-pwa-circle-192.png?v=20260508-3",
