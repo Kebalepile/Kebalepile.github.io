@@ -352,7 +352,7 @@ export function renderLogin(app) {
   resetPanel.append(resetCopy, resetRequestForm, resetConfirmForm, resetActionRow);
 
   header.append(title, subtitle);
-  mobileBrand.appendChild(createBrandMark({ compact: true, showTagline: false }));
+  mobileBrand.appendChild(createBrandMark({ compact: true, showTagline: false, blurBackground: true }));
   card.append(header, loginStatus.root, loginPanel, resetPanel, loginTransition.root);
   pane.append(mobileBrand, card);
   layout.append(showcase, pane);

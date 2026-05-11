@@ -2,9 +2,9 @@ import { createElement } from "../utils/dom.js";
 import { protectImageElement, protectMediaShell } from "../utils/protectedMedia.js";
 
 const defaultBrandIconUrl = new URL("../../assets/logo/yahneh-logo.png", import.meta.url).href;
-const streamBrandIconUrl = new URL("../../assets/logo/stream-logo-transparent.png", import.meta.url).href;
+const circleBrandIconUrl = new URL("../../assets/logo/yahneh-pwa-circle-192.png", import.meta.url).href;
 
-export function createBrandMark({ compact = false, showTagline = false, useStreamLogo = false, blurBackground = false } = {}) {
+export function createBrandMark({ compact = false, showTagline = false, useCircleLogo = false, blurBackground = false } = {}) {
   const wrapper = createElement("div", {
     className: `brand-mark${compact ? " brand-mark-compact" : ""}`
   });
@@ -15,13 +15,8 @@ export function createBrandMark({ compact = false, showTagline = false, useStrea
   protectMediaShell(icon);
   const image = document.createElement("img");
   image.className = "brand-mark-image";
-  const logoUrl = useStreamLogo ? streamBrandIconUrl : defaultBrandIconUrl;
+  const logoUrl = useCircleLogo ? circleBrandIconUrl : defaultBrandIconUrl;
   image.src = logoUrl;
-  if (useStreamLogo) {
-    image.onerror = () => {
-      image.src = defaultBrandIconUrl;
-    };
-  }
   image.alt = "";
   image.decoding = "async";
   protectImageElement(image);

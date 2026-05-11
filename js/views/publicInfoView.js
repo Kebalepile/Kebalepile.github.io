@@ -249,7 +249,7 @@ export function renderPublicInfo(app, payload = null) {
   const bodyCard = createElement("section", { className: "public-info-card" });
   const sectionList = createElement("div", { className: "public-info-section-list" });
 
-  brand.append(createBrandMark({ compact: true, showTagline: true }));
+  brand.append(createBrandMark({ compact: true, showTagline: true, useCircleLogo: true }));
   heroCopy.append(eyebrow, intro);
   heroTop.append(brand, backButton);
 

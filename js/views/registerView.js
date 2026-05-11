@@ -309,7 +309,7 @@ export function renderRegister(app) {
   });
 
   form.append(progress.root, stageHost);
-  brand.appendChild(createBrandMark({ compact: true, showTagline: false, useStreamLogo: true, blurBackground: true }));
+  brand.appendChild(createBrandMark({ compact: true, showTagline: false, blurBackground: true }));
   header.append(title, subtitle);
   card.append(brand, header, form, loginBtn);
   pane.append(card);
