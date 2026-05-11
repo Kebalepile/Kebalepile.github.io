@@ -425,6 +425,8 @@ export class LiveStreamViewer {
         clearRelayFallbackTimer();
         clearRelayStartCheckTimer();
         this.video.srcObject = remoteStream;
+        this.video.autoplay = true;
+        this.video.playsInline = true;
         this.video.muted = this.audioMuted;
         setConnectionStatus("Connected", { loading: false });
       }),

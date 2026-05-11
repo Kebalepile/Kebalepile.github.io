@@ -5,10 +5,14 @@ import { validateImageUrl } from "../utils/validators.js";
 
 const ICE_SERVERS = [
   { urls: ["stun:stun.l.google.com:19302"] },
-  { urls: ["stun:stun1.l.google.com:19302"] }
+  { urls: ["stun:stun1.l.google.com:19302"] },
+  // Free TURN servers for production NAT traversal
+  { urls: ["turn:openrelay.metered.ca:80"], username: "openrelayproject", credential: "openrelayproject" },
+  { urls: ["turn:openrelay.metered.ca:443"], username: "openrelayproject", credential: "openrelayproject" },
+  { urls: ["turn:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject" }
 ];
-const CAMERA_VIDEO_WIDTH = 1280;
-const CAMERA_VIDEO_HEIGHT = 720;
+const CAMERA_VIDEO_WIDTH = 640;
+const CAMERA_VIDEO_HEIGHT = 360;
 const CAMERA_VIDEO_FRAMERATE = 20;
 const CAMERA_VIDEO_MAX_BITRATE = 350_000;
 const SCREEN_VIDEO_MAX_BITRATE = 600_000;
