@@ -602,6 +602,11 @@ export class LiveStreamBroadcaster {
         }
 
         if (action === "unmute") {
+          if (!isMuted) {
+            showToast(`${message.username || "Viewer"} is not muted.`, "info");
+            return;
+          }
+
           await liveStreamManager.unmuteViewer(this.stream.id, viewerId);
           this.viewerMuteState.set(viewerId, false);
           showToast(`${message.username || "Viewer"} unmuted.`, "success");
