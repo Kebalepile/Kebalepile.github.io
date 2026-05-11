@@ -11,9 +11,9 @@ const ICE_SERVERS = [
   { urls: ["turn:openrelay.metered.ca:443"], username: "openrelayproject", credential: "openrelayproject" },
   { urls: ["turn:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject" }
 ];
-const CAMERA_VIDEO_WIDTH = 854;
-const CAMERA_VIDEO_HEIGHT = 480;
-const CAMERA_VIDEO_FRAMERATE = 24;
+const CAMERA_VIDEO_WIDTH = 640;
+const CAMERA_VIDEO_HEIGHT = 360;
+const CAMERA_VIDEO_FRAMERATE = 20;
 const CAMERA_VIDEO_MAX_BITRATE = 350_000;
 const SCREEN_VIDEO_MAX_BITRATE = 600_000;
 const AUDIO_MAX_BITRATE = 32_000;
@@ -1234,16 +1234,41 @@ class LiveStreamManager {
     peerConnection.liveMediaStateChannel = mediaStateChannel;
     this.bindMediaStateChannel(mediaStateChannel, { sendCurrentState: true });
 
-    for (const track of this.localStream.getTracks()) {
-      const sender = peerConnection.addTrack(track, this.localStream);
+    const videoTransceiver = peerConnection.addTransceiver("video", {
+      direction: "sendonly"
+    });
+    const audioTransceiver = peerConnection.addTransceiver("audio", {
+      direction: "sendonly"
+    });
 
+    if (
+      videoTransceiver &&
+      typeof videoTransceiver.setCodecPreferences === "function" &&
+      typeof RTCRtpSender !== "undefined" &&
+      typeof RTCRtpSender.getCapabilities === "function"
+    ) {
+      const capabilities = RTCRtpSender.getCapabilities("video");
+      const vp8Codecs = (capabilities?.codecs || []).filter((codec) =>
+        /video\/VP8/i.test(codec.mimeType)
+      );
+
+      if (vp8Codecs.length) {
+        videoTransceiver.setCodecPreferences(vp8Codecs);
+      }
+    }
+
+    for (const track of this.localStream.getTracks()) {
       if (track.kind === "video") {
         setVideoTrackContentHint(track, { screenShare: this.isScreenSharing });
+        const sender = videoTransceiver.sender;
+        await sender.replaceTrack(track);
         await tuneVideoSender(sender, {
           screenShare: this.isScreenSharing,
           qualityLevel: this.videoQualityLevel
         });
       } else if (track.kind === "audio") {
+        const sender = audioTransceiver.sender;
+        await sender.replaceTrack(track);
         await tuneAudioSender(sender);
       }
     }
