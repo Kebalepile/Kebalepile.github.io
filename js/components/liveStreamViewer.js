@@ -553,7 +553,6 @@ export class LiveStreamViewer {
           const verb = notification.action === "heart" ? "hearted" : "liked";
           const text = `${notification.streamerName || "Streamer"} ${verb} your message.`;
 
-          showToast(text, "success");
           addMobileOverlayItem({
             className: "mobile-live-overlay-reaction",
             text

@@ -256,9 +256,89 @@ export function createLiveChatPanel({
   form.append(input, sendButton);
   panel.append(header, messages, reactions, form);
 
+  const viewerRows = new Map();
+  let activeMenu = null;
+
+  const closeActiveMenu = () => {
+    if (!activeMenu) {
+      return;
+    }
+
+    activeMenu.menu.hidden = true;
+    activeMenu.button.setAttribute("aria-expanded", "false");
+    activeMenu = null;
+  };
+
+  document.addEventListener("click", (event) => {
+    if (!activeMenu) {
+      return;
+    }
+
+    const target = event.target;
+    if (activeMenu.menu.contains(target) || activeMenu.button.contains(target)) {
+      return;
+    }
+
+    closeActiveMenu();
+  });
+
+  const getUserId = (message) => String(message.userId || "");
+  const setRowStatus = (row, status) => {
+    row.classList.remove(
+      "live-chat-message-liked",
+      "live-chat-message-hearted",
+      "live-chat-message-muted",
+      "live-chat-message-kicked"
+    );
+
+    if (!status) {
+      row.statusBadge.hidden = true;
+      row.statusBadge.textContent = "";
+      row.dataset.status = "";
+      row.classList.toggle("live-chat-message-has-status", false);
+      return;
+    }
+
+    const statusIcons = {
+      like: "👍",
+      heart: "❤️",
+      muted: "🤫",
+      kicked: "🚫"
+    };
+
+    row.dataset.status = status;
+    row.statusBadge.hidden = false;
+    row.statusBadge.textContent = statusIcons[status] || "";
+    const statusClass =
+      status === "like"
+        ? "live-chat-message-liked"
+        : status === "heart"
+          ? "live-chat-message-hearted"
+          : `live-chat-message-${status}`;
+    row.classList.add(statusClass);
+    row.classList.toggle("live-chat-message-has-status", true);
+  };
+
+  const updateViewerModerationState = (userId, status) => {
+    const rows = viewerRows.get(String(userId));
+    if (!rows) {
+      return;
+    }
+
+    rows.forEach((row) => {
+      row.message.muted = status === "muted";
+      const muteButton = row.querySelector(".live-chat-message-menu-item-mute");
+      if (muteButton) {
+        muteButton.textContent = row.message.muted ? "Unmute" : "Mute";
+      }
+      setRowStatus(row, status);
+    });
+  };
+
   return {
     root: panel,
     messages,
+    updateViewerModerationState,
     addMessage(message) {
       const row = createElement("div", { className: "live-chat-message" });
       const meta = createElement("div", { className: "live-chat-message-meta" });
@@ -270,8 +350,21 @@ export function createLiveChatPanel({
         className: "live-chat-text",
         text: message.text || ""
       });
+      const statusBadge = createElement("span", {
+        className: "live-chat-message-status"
+      });
 
       message.muted = Boolean(message.muted);
+      row.message = message;
+      row.statusBadge = statusBadge;
+      row.setStatus = (status) => setRowStatus(row, status);
+
+      const userId = getUserId(message);
+      if (!viewerRows.has(userId)) {
+        viewerRows.set(userId, new Set());
+      }
+      viewerRows.get(userId).add(row);
+
       meta.appendChild(author);
 
       if (canModerateMessage(message)) {
@@ -294,23 +387,23 @@ export function createLiveChatPanel({
         const makeActionButton = ({ action, label, danger = false }) => {
           const actionLabel =
             action === "like"
-              ? "\uD83D\uDC4D Like"
+              ? "👍 Like"
               : action === "heart"
-                ? "\u2764\uFE0F Heart"
+                ? "❤️ Heart"
                 : label;
           const button = createElement("button", {
             className: danger
               ? "live-chat-message-menu-item live-chat-message-menu-item-danger"
-              : "live-chat-message-menu-item",
+              : `live-chat-message-menu-item${action === "mute" ? " live-chat-message-menu-item-mute" : ""}`,
             type: "button",
             text: actionLabel
           });
+          button.dataset.action = action;
 
           button.addEventListener("click", (event) => {
             event.preventDefault();
             event.stopPropagation();
-            menu.hidden = true;
-            menuButton.setAttribute("aria-expanded", "false");
+            closeActiveMenu();
 
             const selectedAction =
               action === "mute"
@@ -338,14 +431,22 @@ export function createLiveChatPanel({
         menuButton.addEventListener("click", (event) => {
           event.preventDefault();
           event.stopPropagation();
-          menu.hidden = !menu.hidden;
+
+          if (activeMenu && activeMenu.menu !== menu) {
+            closeActiveMenu();
+          }
+
+          const isHidden = menu.hidden;
+          menu.hidden = !isHidden;
           menuButton.setAttribute("aria-expanded", String(!menu.hidden));
+          activeMenu = menu.hidden ? null : { menu, button: menuButton };
         });
         actions.append(menuButton, menu);
         meta.appendChild(actions);
       }
 
-      row.append(meta, text);
+      row.append(meta, text, statusBadge);
+      setRowStatus(row, message.muted ? "muted" : "" );
       messages.appendChild(row);
       messages.scrollTop = messages.scrollHeight;
     }

@@ -575,7 +575,7 @@ export class LiveStreamBroadcaster {
       }
 
       if (action === "like" || action === "heart") {
-        row?.classList.add(action === "heart" ? "live-chat-message-hearted" : "live-chat-message-liked");
+        row?.setStatus?.(action);
         broadcast({
           type: "stream:comment-moderation",
           streamId: this.stream.id,
@@ -597,6 +597,7 @@ export class LiveStreamBroadcaster {
 
           await liveStreamManager.muteViewer(this.stream.id, viewerId);
           this.viewerMuteState.set(viewerId, true);
+          this.chat.updateViewerModerationState(viewerId, "muted");
           showToast(`${message.username || "Viewer"} muted.`, "success");
           return;
         }
@@ -609,12 +610,14 @@ export class LiveStreamBroadcaster {
 
           await liveStreamManager.unmuteViewer(this.stream.id, viewerId);
           this.viewerMuteState.set(viewerId, false);
+          this.chat.updateViewerModerationState(viewerId, "");
           showToast(`${message.username || "Viewer"} unmuted.`, "success");
           return;
         }
 
         if (action === "kick") {
           await liveStreamManager.kickViewer(this.stream.id, viewerId);
+          this.chat.updateViewerModerationState(viewerId, "kicked");
           showToast(`${message.username || "Viewer"} removed from the stream.`, "success");
         }
       } catch (error) {
