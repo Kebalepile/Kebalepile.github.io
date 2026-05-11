@@ -560,6 +560,12 @@ body.app-sensitive-route-messages.app-privacy-obscured::after {
   box-shadow: 0 18px 34px rgba(37, 99, 235, 0.12);
 }
 
+.brand-mark-icon-blur {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
 .auth-showcase-title {
   margin: 0;
   font-size: clamp(42px, 4vw, 62px);

@@ -665,7 +665,7 @@ function createLoginShowcase() {
   const showcase = createElement("section", {
     className: "auth-showcase auth-showcase-login"
   });
-  const brand = createBrandMark({ showTagline: false });
+  const brand = createBrandMark({ showTagline: false, useStreamLogo: true, blurBackground: true });
   const title = createElement("h2", {
     className: "auth-showcase-title"
   });
