@@ -5,7 +5,11 @@ import { validateImageUrl } from "../utils/validators.js";
 
 const ICE_SERVERS = [
   { urls: ["stun:stun.l.google.com:19302"] },
-  { urls: ["stun:stun1.l.google.com:19302"] }
+  { urls: ["stun:stun1.l.google.com:19302"] },
+  // Free TURN servers for production NAT traversal
+  { urls: ["turn:openrelay.metered.ca:80"], username: "openrelayproject", credential: "openrelayproject" },
+  { urls: ["turn:openrelay.metered.ca:443"], username: "openrelayproject", credential: "openrelayproject" },
+  { urls: ["turn:openrelay.metered.ca:443?transport=tcp"], username: "openrelayproject", credential: "openrelayproject" }
 ];
 const CAMERA_VIDEO_WIDTH = 854;
 const CAMERA_VIDEO_HEIGHT = 480;
@@ -1092,6 +1096,7 @@ class LiveStreamManager {
     const queuedCandidates = this.pendingIceCandidates.get(safeUserId) || [];
     queuedCandidates.push(candidate);
     this.pendingIceCandidates.set(safeUserId, queuedCandidates);
+    console.log(`[LiveStreamService] Queued ICE candidate for ${safeUserId}, total queued: ${queuedCandidates.length}`);
   }
 
   async flushPendingIceCandidates(userId = "", peerConnection) {
@@ -1107,6 +1112,7 @@ class LiveStreamManager {
     }
 
     this.pendingIceCandidates.delete(safeUserId);
+    console.log(`[LiveStreamService] Flushing ${queuedCandidates.length} queued ICE candidates for ${safeUserId}`);
 
     for (const candidate of queuedCandidates) {
       try {
@@ -1118,6 +1124,7 @@ class LiveStreamManager {
   }
 
   createPeerConnection(targetUserId = "") {
+    console.log(`[LiveStreamService] Creating peer connection for ${targetUserId || 'viewer'}`);
     const peerConnection = new RTCPeerConnection({ iceServers: ICE_SERVERS });
 
     peerConnection.ondatachannel = (event) => {
@@ -1133,6 +1140,7 @@ class LiveStreamManager {
         return;
       }
 
+      console.log(`[LiveStreamService] Received remote track for ${targetUserId || event.track.id}`);
       this.remoteStreams.set(targetUserId || event.track.id, remoteStream);
       this.notify("remote-stream-added", {
         stream: remoteStream,
@@ -1146,6 +1154,7 @@ class LiveStreamManager {
         return;
       }
 
+      console.log(`[LiveStreamService] Generated ICE candidate for ${targetUserId}`);
       this.sendSignalingMessage({
         type: "stream:ice-candidate",
         candidate: event.candidate,
@@ -1154,6 +1163,7 @@ class LiveStreamManager {
     };
 
     peerConnection.onconnectionstatechange = () => {
+      console.log(`[LiveStreamService] Connection state changed to ${peerConnection.connectionState} for ${targetUserId}`);
       this.notify("connection-state-changed", {
         state: peerConnection.connectionState,
         userId: targetUserId
@@ -1361,6 +1371,7 @@ class LiveStreamManager {
     }
 
     if (message.type === "stream:offer" && this.viewerPeerConnection) {
+      console.log(`[LiveStreamService] Received offer from ${message.userId}, setting remote description`);
       await this.viewerPeerConnection.setRemoteDescription(
         new RTCSessionDescription(message.offer)
       );
@@ -1379,6 +1390,7 @@ class LiveStreamManager {
       const peerConnection = this.broadcasterPeerConnections.get(message.userId);
 
       if (peerConnection) {
+        console.log(`[LiveStreamService] Received answer from ${message.userId}, setting remote description`);
         await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
         await this.flushPendingIceCandidates(message.userId, peerConnection);
       }
@@ -1393,8 +1405,10 @@ class LiveStreamManager {
 
       if (message.candidate) {
         if (peerConnection && peerConnection.remoteDescription && peerConnection.remoteDescription.type) {
+          console.log(`[LiveStreamService] Adding ICE candidate immediately for ${message.userId}`);
           await peerConnection.addIceCandidate(new RTCIceCandidate(message.candidate));
         } else {
+          console.log(`[LiveStreamService] Queueing ICE candidate for ${message.userId} (no remote description yet)`);
           this.queueIceCandidate(message.userId, message.candidate);
         }
       }

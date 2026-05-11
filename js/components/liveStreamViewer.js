@@ -389,14 +389,18 @@ export class LiveStreamViewer {
     const scheduleRelayFallback = () => {
       clearRelayFallbackTimer();
       const timeoutMs = isMobileDevice() ? 2000 : 3000;
+      console.log(`[LiveStreamViewer] Scheduling relay fallback in ${timeoutMs}ms`);
       relayFallbackTimerId = window.setTimeout(() => {
+        console.log("[LiveStreamViewer] Relay fallback triggered - requesting peer fallback");
         setConnectionStatus("Reconnecting...");
         liveStreamManager.requestPeerFallback?.();
       }, timeoutMs);
     };
     const scheduleRelayStartCheck = () => {
       clearRelayStartCheckTimer();
+      console.log("[LiveStreamViewer] Scheduling relay start check in 1000ms");
       relayStartCheckTimerId = window.setTimeout(() => {
+        console.log("[LiveStreamViewer] Relay start check triggered - requesting peer fallback");
         setConnectionStatus("Reconnecting...");
         liveStreamManager.requestPeerFallback?.();
       }, 1000);
@@ -418,6 +422,7 @@ export class LiveStreamViewer {
       clearRelayFallbackTimer,
       clearRelayStartCheckTimer,
       liveStreamManager.on("remote-stream-added", ({ stream: remoteStream }) => {
+        console.log("[LiveStreamViewer] Remote stream added - WebRTC connected");
         clearRelayFallbackTimer();
         clearRelayStartCheckTimer();
         this.video.srcObject = remoteStream;
@@ -426,6 +431,7 @@ export class LiveStreamViewer {
         setConnectionStatus("Connected", { loading: false });
       }),
       liveStreamManager.on("relay-playback-ready", ({ objectUrl }) => {
+        console.log("[LiveStreamViewer] Relay playback ready - switching to relay mode");
         this.video.srcObject = null;
         this.video.src = objectUrl;
         this.video.muted = this.audioMuted;
@@ -434,25 +440,30 @@ export class LiveStreamViewer {
         scheduleRelayFallback();
       }),
       liveStreamManager.on("relay-stream-started", () => {
+        console.log("[LiveStreamViewer] Relay stream started");
         clearRelayStartCheckTimer();
         setConnectionStatus("Buffering stream...");
         scheduleRelayFallback();
       }),
       liveStreamManager.on("relay-stream-added", () => {
+        console.log("[LiveStreamViewer] Relay stream added - relay connected");
         clearRelayFallbackTimer();
         clearRelayStartCheckTimer();
         void this.video.play?.().catch(() => {});
         setConnectionStatus("Connected", { loading: false });
       }),
       liveStreamManager.on("relay-stream-stopped", () => {
+        console.log("[LiveStreamViewer] Relay stream stopped");
         setConnectionStatus("Stream paused.", { loading: true });
       }),
       liveStreamManager.on("relay-playback-error", () => {
+        console.log("[LiveStreamViewer] Relay playback error");
         clearRelayFallbackTimer();
         setConnectionStatus("Reconnecting...");
         liveStreamManager.requestPeerFallback?.();
       }),
       liveStreamManager.on("connection-state-changed", ({ state }) => {
+        console.log(`[LiveStreamViewer] Connection state changed: ${state}`);
         const normalizedState = typeof state === "string" ? state.toLowerCase() : "";
         const label = normalizedState
           ? normalizedState.charAt(0).toUpperCase() + normalizedState.slice(1)
@@ -462,9 +473,11 @@ export class LiveStreamViewer {
         setConnectionStatus(label, { loading: !isConnected });
       }),
       liveStreamManager.on("broadcaster-ready", () => {
+        console.log("[LiveStreamViewer] Broadcaster ready");
         setConnectionStatus("Broadcaster reconnected. Rejoining...");
       }),
       liveStreamManager.on("viewer-reconnecting", () => {
+        console.log("[LiveStreamViewer] Viewer reconnecting");
         setConnectionStatus("Reconnecting...");
       }),
       liveStreamManager.on("viewer-count-changed", ({ viewerCount }) => {
