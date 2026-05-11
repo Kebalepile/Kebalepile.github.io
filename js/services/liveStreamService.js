@@ -14,13 +14,13 @@ const ICE_SERVERS = [
 const CAMERA_VIDEO_WIDTH = 854;
 const CAMERA_VIDEO_HEIGHT = 480;
 const CAMERA_VIDEO_FRAMERATE = 24;
-const CAMERA_VIDEO_MAX_BITRATE = 850_000;
-const SCREEN_VIDEO_MAX_BITRATE = 1_200_000;
-const AUDIO_MAX_BITRATE = 48_000;
-const RELAY_TRANSPORT_ENABLED = true;
+const CAMERA_VIDEO_MAX_BITRATE = 350_000;
+const SCREEN_VIDEO_MAX_BITRATE = 600_000;
+const AUDIO_MAX_BITRATE = 32_000;
+const RELAY_TRANSPORT_ENABLED = false;
 const RELAY_CHUNK_INTERVAL_MS = 1000;
-const RELAY_VIDEO_BITRATE = 750_000;
-const RELAY_AUDIO_BITRATE = 48_000;
+const RELAY_VIDEO_BITRATE = 350_000;
+const RELAY_AUDIO_BITRATE = 32_000;
 const ADAPTIVE_QUALITY_INTERVAL_MS = 5000;
 const ADAPTIVE_QUALITY_STABLE_SAMPLES = 3;
 const VIDEO_QUALITY_LEVELS = ["low", "medium", "high"];
@@ -1003,14 +1003,7 @@ class LiveStreamManager {
     }
 
     this.connectSignaling();
-    if (canPlayRelay()) {
-      this.setupRelayPlayback();
-      this.sendSignalingMessage({
-        type: "stream:relay-subscribe"
-      });
-    } else {
-      this.viewerPeerConnection = this.createPeerConnection();
-    }
+    this.viewerPeerConnection = this.createPeerConnection();
     this.notify("viewer-joined", response);
 
     return response;
@@ -1294,7 +1287,9 @@ class LiveStreamManager {
     if (message.type === "stream:broadcaster-ready") {
       if (!this.isBroadcaster) {
         this.notify("broadcaster-ready", message);
-        await this.rejoinStream(message.streamId);
+        if (!this.viewerPeerConnection && !this.streamId) {
+          await this.rejoinStream(message.streamId);
+        }
       }
 
       return;
