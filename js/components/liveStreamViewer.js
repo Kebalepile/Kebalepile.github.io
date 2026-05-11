@@ -550,8 +550,8 @@ export class LiveStreamViewer {
         }
 
         if (notification.action === "like" || notification.action === "heart") {
-          const verb = notification.action === "heart" ? "hearted" : "liked";
-          const text = `${notification.streamerName || "Streamer"} ${verb} your message.`;
+          const emoji = notification.action === "heart" ? "❤️" : "👍";
+          const text = `${notification.streamerName || "Streamer"} ${emoji} your message.`;
 
           addMobileOverlayItem({
             className: "mobile-live-overlay-reaction",

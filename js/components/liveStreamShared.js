@@ -387,9 +387,9 @@ export function createLiveChatPanel({
         const makeActionButton = ({ action, label, danger = false }) => {
           const actionLabel =
             action === "like"
-              ? "👍 Like"
+              ? "👍"
               : action === "heart"
-                ? "❤️ Heart"
+                ? "❤️"
                 : label;
           const button = createElement("button", {
             className: danger
