@@ -205,6 +205,7 @@ export class LiveStreamViewer {
     });
     const overlayItems = [];
     let relayFallbackTimerId = null;
+    let relayStartCheckTimerId = null;
     const isCompactOverlayMode = () =>
       typeof window !== "undefined" && window.matchMedia?.("(max-width: 900px)").matches;
 
@@ -376,12 +377,29 @@ export class LiveStreamViewer {
         relayFallbackTimerId = null;
       }
     };
+    const clearRelayStartCheckTimer = () => {
+      if (relayStartCheckTimerId) {
+        window.clearTimeout(relayStartCheckTimerId);
+        relayStartCheckTimerId = null;
+      }
+    };
+    const isMobileDevice = () =>
+      typeof navigator !== "undefined" &&
+      /Android|iPhone|iPad|iPod|Windows Phone/i.test(navigator.userAgent);
     const scheduleRelayFallback = () => {
       clearRelayFallbackTimer();
+      const timeoutMs = isMobileDevice() ? 2000 : 3000;
       relayFallbackTimerId = window.setTimeout(() => {
         setConnectionStatus("Reconnecting...");
         liveStreamManager.requestPeerFallback?.();
-      }, 9000);
+      }, timeoutMs);
+    };
+    const scheduleRelayStartCheck = () => {
+      clearRelayStartCheckTimer();
+      relayStartCheckTimerId = window.setTimeout(() => {
+        setConnectionStatus("Reconnecting...");
+        liveStreamManager.requestPeerFallback?.();
+      }, 1000);
     };
 
     copy.append(badge, title, this.durationNode);
@@ -398,8 +416,10 @@ export class LiveStreamViewer {
     this.cleanupFns.push(
       () => window.clearInterval(this.durationTimerId),
       clearRelayFallbackTimer,
+      clearRelayStartCheckTimer,
       liveStreamManager.on("remote-stream-added", ({ stream: remoteStream }) => {
         clearRelayFallbackTimer();
+        clearRelayStartCheckTimer();
         this.video.srcObject = remoteStream;
         this.video.muted = this.audioMuted;
         void this.video.play?.().catch(() => {});
@@ -410,14 +430,17 @@ export class LiveStreamViewer {
         this.video.src = objectUrl;
         this.video.muted = this.audioMuted;
         setConnectionStatus("Buffering stream...");
+        scheduleRelayStartCheck();
         scheduleRelayFallback();
       }),
       liveStreamManager.on("relay-stream-started", () => {
+        clearRelayStartCheckTimer();
         setConnectionStatus("Buffering stream...");
         scheduleRelayFallback();
       }),
       liveStreamManager.on("relay-stream-added", () => {
         clearRelayFallbackTimer();
+        clearRelayStartCheckTimer();
         void this.video.play?.().catch(() => {});
         setConnectionStatus("Connected", { loading: false });
       }),
