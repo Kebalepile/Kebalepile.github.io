@@ -197,7 +197,7 @@ li {
 .brand-mark-compact .brand-mark-icon {
   width: 46px;
   height: 46px;
-  border-radius: 14px;
+  border-radius: 50%;
 }
 
 .brand-mark-image {

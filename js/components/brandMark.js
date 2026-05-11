@@ -1,7 +1,7 @@
 import { createElement } from "../utils/dom.js";
 import { protectImageElement, protectMediaShell } from "../utils/protectedMedia.js";
 
-const brandIconUrl = new URL("../../assets/logo/yahneh-logo.png", import.meta.url).href;
+const brandIconUrl = new URL("../../assets/logo/yahneh-pwa-circle-512.png", import.meta.url).href;
 
 export function createBrandMark({ compact = false, showTagline = false } = {}) {
   const wrapper = createElement("div", {

@@ -10,7 +10,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "prefer_related_applications": false,
-  "background_color": "#fff7fb",
+  "background_color": "#ff7220",
   "theme_color": "#ff4fa3",
   "icons": [
     {
