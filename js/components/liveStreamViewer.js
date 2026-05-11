@@ -423,11 +423,24 @@ export class LiveStreamViewer {
       clearRelayStartCheckTimer,
       liveStreamManager.on("remote-stream-added", ({ stream: remoteStream }) => {
         console.log("[LiveStreamViewer] Remote stream added - WebRTC connected");
+        console.log("[LiveStreamViewer] remote-stream-added", remoteStream.getTracks());
         clearRelayFallbackTimer();
         clearRelayStartCheckTimer();
         this.video.srcObject = remoteStream;
+        this.video.autoplay = true;
+        this.video.playsInline = true;
+        this.video.controls = true;
         this.video.muted = this.audioMuted;
-        void this.video.play?.().catch(() => {});
+        this.video.style.display = "block";
+        this.video.style.opacity = "1";
+        this.video.style.height = "100%";
+        this.video.style.width = "100%";
+        this.video.style.objectFit = "cover";
+        console.log("[LiveStreamViewer] video srcObject set", this.video.srcObject);
+        void this.video.play?.().catch((error) => {
+          console.log("[LiveStreamViewer] video.play() failed", error);
+        });
+        console.log("[LiveStreamViewer] video dimensions", this.video.videoWidth, this.video.videoHeight);
         setConnectionStatus("Connected", { loading: false });
       }),
       liveStreamManager.on("relay-playback-ready", ({ objectUrl }) => {
