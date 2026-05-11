@@ -398,20 +398,9 @@ class LiveStreamManager {
   }
 
   announceBroadcasterReady() {
-    const sendReady = () => {
-      this.sendSignalingMessage({
-        type: "stream:broadcaster-ready"
-      });
-    };
-
-    if (typeof window !== "undefined") {
-      [0, 500, 1500, 3000, 6000].forEach((delay) => {
-        window.setTimeout(sendReady, delay);
-      });
-      return;
-    }
-
-    sendReady();
+    this.sendSignalingMessage({
+      type: "stream:broadcaster-ready"
+    });
   }
 
   startRelayBroadcast({ restart = false } = {}) {
@@ -1287,8 +1276,14 @@ class LiveStreamManager {
     if (message.type === "stream:broadcaster-ready") {
       if (!this.isBroadcaster) {
         this.notify("broadcaster-ready", message);
-        if (!this.viewerPeerConnection && !this.streamId) {
+
+        if (!this.streamId && !this.viewerPeerConnection) {
           await this.rejoinStream(message.streamId);
+        } else {
+          console.log(
+            `[LiveStreamService] Ignoring duplicate broadcaster-ready for stream ${message.streamId}; ` +
+            `already joined stream=${this.streamId} viewerPeerConnection=${Boolean(this.viewerPeerConnection)}`
+          );
         }
       }
 
