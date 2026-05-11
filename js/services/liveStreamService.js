@@ -1225,41 +1225,36 @@ class LiveStreamManager {
     peerConnection.liveMediaStateChannel = mediaStateChannel;
     this.bindMediaStateChannel(mediaStateChannel, { sendCurrentState: true });
 
-    const videoTransceiver = peerConnection.addTransceiver("video", {
-      direction: "sendonly"
-    });
-    const audioTransceiver = peerConnection.addTransceiver("audio", {
-      direction: "sendonly"
-    });
-
-    if (
-      videoTransceiver &&
-      typeof videoTransceiver.setCodecPreferences === "function" &&
-      typeof RTCRtpSender !== "undefined" &&
-      typeof RTCRtpSender.getCapabilities === "function"
-    ) {
-      const capabilities = RTCRtpSender.getCapabilities("video");
-      const vp8Codecs = (capabilities?.codecs || []).filter((codec) =>
-        /video\/VP8/i.test(codec.mimeType)
-      );
-
-      if (vp8Codecs.length) {
-        videoTransceiver.setCodecPreferences(vp8Codecs);
-      }
-    }
-
     for (const track of this.localStream.getTracks()) {
+      const sender = peerConnection.addTrack(track, this.localStream);
+
       if (track.kind === "video") {
         setVideoTrackContentHint(track, { screenShare: this.isScreenSharing });
-        const sender = videoTransceiver.sender;
-        await sender.replaceTrack(track);
         await tuneVideoSender(sender, {
           screenShare: this.isScreenSharing,
           qualityLevel: this.videoQualityLevel
         });
+
+        const transceiver = peerConnection
+          .getTransceivers()
+          .find((item) => item.sender === sender);
+
+        if (
+          transceiver &&
+          typeof transceiver.setCodecPreferences === "function" &&
+          typeof RTCRtpSender !== "undefined" &&
+          typeof RTCRtpSender.getCapabilities === "function"
+        ) {
+          const capabilities = RTCRtpSender.getCapabilities("video");
+          const vp8Codecs = (capabilities?.codecs || []).filter((codec) =>
+            /video\/VP8/i.test(codec.mimeType)
+          );
+
+          if (vp8Codecs.length) {
+            transceiver.setCodecPreferences(vp8Codecs);
+          }
+        }
       } else if (track.kind === "audio") {
-        const sender = audioTransceiver.sender;
-        await sender.replaceTrack(track);
         await tuneAudioSender(sender);
       }
     }
