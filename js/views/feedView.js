@@ -19,6 +19,13 @@ import { showToast } from "../components/toast.js";
 import { formatLocation } from "../utils/location.js";
 
 const FEED_SKELETON_COUNT = 3;
+const FEED_INVITE_PROMPTS = [
+  "Something happened nearby",
+  "Ask the community",
+  "Plug a local person",
+  "Share a warning",
+  "Say what everyone is thinking"
+];
 
 export async function renderFeed(app, currentUser, payload = null) {
   clearElement(app);
@@ -44,20 +51,65 @@ export async function renderFeed(app, currentUser, payload = null) {
   const feedHeader = createElement("section", {
     className: "feed-header-card feed-hero-card"
   });
+  const heroTop = createElement("div", { className: "feed-hero-top" });
+  const heroCopy = createElement("div", { className: "feed-hero-copy" });
+  const eyebrow = createElement("p", {
+    className: "feed-hero-eyebrow",
+    text: "Your side of the story"
+  });
 
   const feedTitle = createElement("h2", {
     className: "section-title",
-    text: "Kasi Feed"
+    text: "What is moving in your kasi?"
   });
   const feedText = createElement("p", {
-    className: "section-copy",
-    text: "See what people in your area are saying right now, then jump into the thread with comments, replies, and voice notes."
+    className: "section-copy feed-hero-copy-text",
+    text: "Bring the street talk online: ask what is happening, warn people early, shout out local wins, or say the thing everyone has been meaning to say."
+  });
+  const heroActions = createElement("div", { className: "feed-hero-actions" });
+  const createPostBtn = createElement("button", {
+    className: "primary-btn feed-hero-post-btn",
+    text: "Gab",
+    type: "button"
+  });
+  const profileHint = createElement("p", {
+    className: "feed-hero-location",
+    text: formatLocation(currentUser.location) || "Set your township on your profile"
+  });
+  const promptRail = createElement("div", {
+    className: "feed-invite-rail",
+    attributes: {
+      "aria-label": "Post ideas"
+    }
   });
   const statScroller = createElement("div", { className: "feed-stat-scroller" });
   const statRow = createElement("div", { className: "feed-stat-row" });
   statScroller.appendChild(statRow);
 
-  const filters = createElement("div", { className: "filter-row" });
+  const filterPanel = createElement("div", {
+    className: "feed-discovery-panel feed-discovery-panel-collapsed"
+  });
+  const filterHeader = createElement("div", { className: "feed-discovery-header" });
+  const filterTitle = createElement("p", {
+    className: "feed-discovery-title",
+    text: "Explore conversations"
+  });
+  const filterToggleBtn = createElement("button", {
+    className: "feed-discovery-toggle-btn",
+    type: "button",
+    attributes: {
+      "aria-label": "Show conversation filters",
+      "aria-expanded": "false",
+      "aria-controls": "feed-discovery-body",
+      title: "Show filters"
+    }
+  });
+  filterToggleBtn.appendChild(createChevronIcon());
+  const filterBody = createElement("div", {
+    className: "feed-discovery-body",
+    id: "feed-discovery-body"
+  });
+  const filters = createElement("div", { className: "filter-row feed-filter-row" });
   const scopeTabs = createElement("div", {
     className: "feed-scope-tabs",
     attributes: {
@@ -66,9 +118,9 @@ export async function renderFeed(app, currentUser, payload = null) {
     }
   });
   const scopeButtons = [
-    { key: "all-townships", label: "All Townships" },
+    { key: "all-townships", label: "Everyone" },
     { key: "nearby", label: "Nearby" },
-    { key: "my-township", label: "My Township" }
+    { key: "my-township", label: "My kasi" }
   ].map(({ key, label }) => {
     const button = createElement("button", {
       className: "secondary-btn feed-scope-tab",
@@ -95,7 +147,7 @@ export async function renderFeed(app, currentUser, payload = null) {
     className: "form-input filter-input",
     id: "feed-filter-township",
     type: "text",
-    placeholder: "Filter by township",
+    placeholder: "Township",
     autocomplete: "off"
   });
 
@@ -103,18 +155,40 @@ export async function renderFeed(app, currentUser, payload = null) {
     className: "form-input filter-input",
     id: "feed-filter-extension",
     type: "text",
-    placeholder: "Filter by area",
+    placeholder: "Area or extension",
     autocomplete: "off"
   });
 
   const clearBtn = createElement("button", {
-    className: "secondary-btn",
-    text: "Clear Filters",
-    type: "button"
+    className: "secondary-btn feed-clear-filters-btn",
+    type: "button",
+    attributes: {
+      "aria-label": "Clear filters",
+      title: "Clear filters"
+    }
+  });
+  clearBtn.appendChild(createClearFiltersIcon());
+
+  createPostBtn.addEventListener("click", () => navigate("create-post"));
+  FEED_INVITE_PROMPTS.forEach((prompt) => {
+    const promptBtn = createElement("button", {
+      className: "feed-invite-chip",
+      text: prompt,
+      type: "button"
+    });
+
+    promptBtn.addEventListener("click", () => navigate("create-post"));
+    promptRail.appendChild(promptBtn);
   });
 
+  heroCopy.append(eyebrow, feedTitle, feedText);
+  heroActions.append(createPostBtn, profileHint);
+  heroTop.append(heroCopy, heroActions);
   filters.append(townshipInput, extensionInput, clearBtn);
-  feedHeader.append(feedTitle, feedText, scopeTabs, statScroller, filters);
+  filterHeader.append(filterTitle, filterToggleBtn);
+  filterBody.append(scopeTabs, statScroller, filters);
+  filterPanel.append(filterHeader, filterBody);
+  feedHeader.append(heroTop, promptRail, filterPanel);
 
   const feedList = createElement("section", { className: "feed-list" });
 
@@ -227,10 +301,10 @@ export async function renderFeed(app, currentUser, payload = null) {
     const uniqueAuthors = new Set(posts.map((post) => post.userId)).size;
     clearElement(statRow);
     statRow.append(
-      createStatPill("Posts", String(posts.length)),
-      createStatPill("Neighbors", String(uniqueAuthors)),
+      createStatPill("Stories", String(posts.length)),
+      createStatPill("Voices", String(uniqueAuthors)),
       createStatPill(
-        "Your township",
+        "Home base",
         formatLocation(currentUser.location) || "Set location"
       )
     );
@@ -320,6 +394,16 @@ export async function renderFeed(app, currentUser, payload = null) {
     renderPosts();
   });
 
+  filterToggleBtn.addEventListener("click", () => {
+    const collapsed = filterPanel.classList.toggle("feed-discovery-panel-collapsed");
+    filterToggleBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+    filterToggleBtn.setAttribute(
+      "aria-label",
+      collapsed ? "Show conversation filters" : "Hide conversation filters"
+    );
+    filterToggleBtn.title = collapsed ? "Show filters" : "Hide filters";
+  });
+
   setLiveSyncOptions({
     includePosts: true
   });
@@ -380,9 +464,48 @@ function syncScopeTabs(scopeButtons, activeScope) {
   });
 }
 
+function createChevronIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.classList.add("feed-discovery-toggle-icon");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  path.setAttribute("stroke-width", "2.2");
+  path.setAttribute("d", "m6 9 6 6 6-6");
+  svg.appendChild(path);
+
+  return svg;
+}
+
+function createClearFiltersIcon() {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.classList.add("feed-clear-filters-icon");
+
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute("fill", "none");
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-linecap", "round");
+  path.setAttribute("stroke-linejoin", "round");
+  path.setAttribute("stroke-width", "2");
+  path.setAttribute(
+    "d",
+    "M4 5h16M7 12h10M10 19h4M19 5l-5.5 7v5l-3 2v-7L5 5"
+  );
+  svg.appendChild(path);
+
+  return svg;
+}
+
 function createStatPill(label, value) {
   const pill = createElement("div", {
-    className: `feed-stat-pill${label === "Your township" ? " feed-stat-pill-wide" : ""}`
+    className: `feed-stat-pill${label === "Home base" ? " feed-stat-pill-wide" : ""}`
   });
   const pillLabel = createElement("span", {
     className: "feed-stat-label",
